@@ -1,0 +1,38 @@
+image:
+  repository: webtor/transcode-web-cache
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+update:
+  maxUnavailable: 1
+
+aws:
+  accessKeyId: ""
+  secretAccessKey: ""
+  bucket: ""
+  bucketSpread: ""
+  endpoint: ""
+  region: ""
+  noSSL: ""
+
+persistence:
+  enabled: true
+  hostPath: /var/torrent-web-cache
+  type: DirectoryOrCreate
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

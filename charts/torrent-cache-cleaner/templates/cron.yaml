@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: "{{ include "torrent-cache-cleaner.fullname" . }}"
+  labels:
+    app.kubernetes.io/name: {{ include "torrent-cache-cleaner.name" . }}
+    helm.sh/chart: {{ include "torrent-cache-cleaner.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  schedule: "{{ .Values.schedule }}"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 10
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: "{{ .Chart.Name }}"
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            env:
+              - name: AWS_ACCESS_KEY_ID
+                value: "{{ .Values.aws.accessKeyId }}"
+              - name: AWS_SECRET_ACCESS_KEY
+                value: "{{ .Values.aws.secretAccessKey }}"
+              - name: AWS_BUCKET
+                value: "{{ .Values.aws.bucket }}"
+              - name: AWS_BUCKET_SPREAD
+                value: "{{ .Values.aws.bucketSpread }}"
+              - name: AWS_NO_SSL
+                value: "{{ .Values.aws.noSSL }}"
+              - name: AWS_ENDPOINT
+                value: "{{ .Values.aws.endpoint }}"
+              - name: AWS_REGION
+                value: "{{ .Values.aws.region }}"
+              - name: DONE_TORRENTS_EXPIRE_HOURS
+                value: "{{ .Values.cleaner.expire.done }}"
+              - name: PARTIAL_TORRENTS_EXPIRE_HOURS
+                value: "{{ .Values.cleaner.expire.partial }}"
+              - name: TRANSCODED_EXPIRE_HOURS
+                value: "{{ .Values.cleaner.expire.transcoded }}"
+              - name: TIMEOUT_HOURS
+                value: "{{ .Values.cleaner.timeout }}"
+              - name: CONCURRENCY
+                value: "{{ .Values.cleaner.concurrency }}"
+              - name: MAX_SIZE
+                value: "{{ .Values.cleaner.maxSize }}"
+          restartPolicy: Never
+        {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+      backoffLimit: 0

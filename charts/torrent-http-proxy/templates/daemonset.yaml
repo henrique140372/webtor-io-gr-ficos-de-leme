@@ -1,0 +1,185 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "torrent-http-proxy.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "torrent-http-proxy.name" . }}
+    helm.sh/chart: {{ include "torrent-http-proxy.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "torrent-http-proxy.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.update.maxUnavailable }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: {{ include "torrent-http-proxy.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "torrent-http-proxy.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          env:
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: JOB_NODE_AFFINITY_KEY
+              value: "{{ .Values.jobNodeAffinity.key }}"
+            - name: JOB_NODE_AFFINITY_VALUE
+              value: "{{ .Values.jobNodeAffinity.value }}"
+            - name: SEEDER_AFFINITY_KEY
+              value: "{{ .Values.seeder.nodeAffinity.key }}"
+            - name: SEEDER_AFFINITY_VALUE
+              value: "{{ .Values.seeder.nodeAffinity.value }}"
+            - name: SEEDER_REQUEST_AFFINITY
+              value: "{{ .Values.seeder.requestAffinity }}"
+            - name: SEEDER_IMAGE
+              value: "{{ .Values.seeder.image }}"
+            - name: SEEDER_CPU_REQUESTS
+              value: "{{ .Values.seeder.cpu.requests }}"
+            - name: SEEDER_CPU_LIMITS
+              value: "{{ .Values.seeder.cpu.limits }}"
+            - name: SEEDER_MEMORY_REQUESTS
+              value: "{{ .Values.seeder.memory.requests }}"
+            - name: SEEDER_MEMORY_LIMITS
+              value: "{{ .Values.seeder.memory.limits }}"
+            - name: SEEDER_GRACE
+              value: "{{ .Values.seeder.grace }}"
+            - name: TRANSCODER_IMAGE
+              value: "{{ .Values.transcoder.image }}"
+            - name: TRANSCODER_CPU_REQUESTS
+              value: "{{ .Values.transcoder.cpu.requests }}"
+            - name: TRANSCODER_CPU_LIMITS
+              value: "{{ .Values.transcoder.cpu.limits }}"
+            - name: TRANSCODER_MEMORY_REQUESTS
+              value: "{{ .Values.transcoder.memory.requests }}"
+            - name: TRANSCODER_MEMORY_LIMITS
+              value: "{{ .Values.transcoder.memory.limits }}"
+            - name: MB_TRANSCODER_CPU_REQUESTS
+              value: "{{ .Values.mbTranscoder.cpu.requests }}"
+            - name: MB_TRANSCODER_CPU_LIMITS
+              value: "{{ .Values.mbTranscoder.cpu.limits }}"
+            - name: MB_TRANSCODER_MEMORY_REQUESTS
+              value: "{{ .Values.mbTranscoder.memory.requests }}"
+            - name: MB_TRANSCODER_MEMORY_LIMITS
+              value: "{{ .Values.mbTranscoder.memory.limits }}"
+            - name: TRANSCODER_GRACE
+              value: "{{ .Values.transcoder.grace }}"
+            - name: TRANSCODER_AFFINITY_KEY
+              value: "{{ .Values.transcoder.nodeAffinity.key }}"
+            - name: TRANSCODER_AFFINITY_VALUE
+              value: "{{ .Values.transcoder.nodeAffinity.value }}"
+            - name: TRANSCODER_REQUEST_AFFINITY
+              value: "{{ .Values.transcoder.requestAffinity }}"
+            - name: MB_TRANSCODER_AFFINITY_KEY
+              value: "{{ .Values.mbTranscoder.nodeAffinity.key }}"
+            - name: MB_TRANSCODER_AFFINITY_VALUE
+              value: "{{ .Values.mbTranscoder.nodeAffinity.value }}"
+            - name: WEB_ORIGIN_HOST_REDIRECT
+              value: "{{ .Values.redirect.enabled }}"
+            - name: WEB_ORIGIN_HOST_REDIRECT_PREFIX
+              value: "{{ .Values.redirect.prefix }}"
+            - name: WEB_ORIGIN_HOST_REDIRECT_ADDRESS_TYPE
+              value: "{{ .Values.redirect.addressType }}"
+            - name: USE_SNAPSHOT
+              value: "{{ .Values.snapshot.enabled }}"
+            - name: SNAPSHOT_START_THRESHOLD
+              value: "{{ .Values.snapshot.startThreshold }}"
+            - name: SNAPSHOT_START_FULL_DOWNLOAD_THRESHOLD
+              value: "{{ .Values.snapshot.startFullDownloadThreshold }}"
+            - name: SNAPSHOT_TORRENT_SIZE_LIMIT
+              value: "{{ .Values.snapshot.torrentSizeLimit }}"
+            - name: SNAPSHOT_DOWNLOAD_RATIO
+              value: "{{ .Values.snapshot.downloadRatio }}"
+            - name: AWS_ACCESS_KEY_ID
+              value: "{{ .Values.aws.accessKeyId }}"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "{{ .Values.aws.secretAccessKey }}"
+            - name: AWS_BUCKET
+              value: "{{ .Values.aws.bucket }}"
+            - name: AWS_ENDPOINT
+              value: "{{ .Values.aws.endpoint }}"
+            - name: AWS_REGION
+              value: "{{ .Values.aws.region }}"
+            - name: AWS_BUCKET_SPREAD
+              value: "{{ .Values.aws.bucketSpread }}"
+            - name: AWS_NO_SSL
+              value: "{{ .Values.aws.noSSL }}"
+            - name: PROM_ADDR
+              value: "{{ .Values.promAddr }}"
+            - name: NODE_HIGH_CPU
+              value: "{{ .Values.node.cpu.high }}"
+            - name: NODE_LOW_CPU
+              value: "{{ .Values.node.cpu.low }}"
+            - name: NODE_HIGH_BANDWIDTH
+              value: "{{ .Values.node.bandwidth.high }}"
+            - name: NODE_LOW_BANDWIDTH
+              value: "{{ .Values.node.bandwidth.low }}"
+            - name: NODE_NETWORK_IFACE
+              value: "{{ .Values.node.network.iface }}"
+            - name: CLICKHOUSE_DSN
+              value: "{{ .Values.clickHouse.dsn }}"
+            - name: CLICKHOUSE_REPLICATED
+              value: "{{ .Values.clickHouse.replicated }}"
+            - name: CLICKHOUSE_BATCH_SIZE
+              value: "{{ .Values.clickHouse.batchSize }}"
+            - name: USE_BANDWIDTH_LIMIT
+              value: "{{ .Values.useBandwidthLimit }}"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: httpprobe
+              containerPort: 8081
+              protocol: TCP
+            - name: httpprom
+              containerPort: 8082
+              protocol: TCP
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: httpprobe
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: httpprobe
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

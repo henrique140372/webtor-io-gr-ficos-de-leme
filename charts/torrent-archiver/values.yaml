@@ -1,0 +1,24 @@
+image:
+  repository: ghcr.io/webtor-io/torrent-archiver
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+update:
+  maxUnavailable: 1

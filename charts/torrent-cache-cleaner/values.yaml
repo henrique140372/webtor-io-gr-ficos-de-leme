@@ -1,0 +1,34 @@
+image:
+  repository: ghcr.io/webtor-io/torrent-cache-cleaner
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+schedule: "*/5 * * * *"
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+cleaner:
+  expire:
+    done: 48
+    partial: 24
+    transcoded: 96
+  maxSize: 3T
+  concurrency: 64
+  timeout: 1
+
+aws:
+  accessKeyId: ""
+  secretAccessKey: ""
+  bucket: ""
+  bucketSpread: ""
+  endpoint: ""
+  region: ""
+  noSSL: ""

@@ -1,0 +1,31 @@
+image:
+  repository: minio/minio
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+aws:
+  accessKeyId: ""
+  secretAccessKey: ""
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 200Gi
+  annotations: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

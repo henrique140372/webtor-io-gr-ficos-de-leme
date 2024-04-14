@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/webtor-io/torrent-store
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+aws:
+  enabled: "false"
+  accessKeyId: ""
+  secretAccessKey: ""
+  bucket: ""
+  endpoint: ""
+  region: ""
+  noSSL: ""
+
+redis:
+  enabled: "false"
+
+abuse:
+  enabled: "false"
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

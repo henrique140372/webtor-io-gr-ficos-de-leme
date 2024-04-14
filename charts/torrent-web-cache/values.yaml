@@ -1,0 +1,42 @@
+image:
+  repository: ghcr.io/webtor-io/torrent-web-cache
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+update:
+  maxUnavailable: 1
+
+preload:
+  cacheSize: 10Gi
+  clearCacheOnExit: "false"
+
+persistence:
+  enabled: true
+  hostPath: /var/torrent-web-cache
+  type: DirectoryOrCreate
+
+aws:
+  accessKeyId: ""
+  secretAccessKey: ""
+  bucket: ""
+  bucketSpread: ""
+  endpoint: ""
+  region: ""
+  noSSL: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

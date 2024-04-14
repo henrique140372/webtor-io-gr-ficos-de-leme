@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/webtor-io/webhook
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+ingress:
+  enabled: true
+  annotations: {}
+  paths: ['/']
+  hosts: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+patreon: {}
+
+postgres:
+  instances: 2
+  volume:
+    size: "10Gi"
+  nodeAffinity: {}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

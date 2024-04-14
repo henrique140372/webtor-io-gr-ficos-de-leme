@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "web-ui.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "web-ui.name" . }}
+    helm.sh/chart: {{ include "web-ui.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- if contains "NodePort" .Values.service.type }}
+      nodePort: 30080
+    {{- end }}
+  internalTrafficPolicy: {{ .Values.service.internalTrafficPolicy }}
+{{- if .Values.service.topologyKeys }}
+  topologyKeys:
+  {{- range .Values.service.topologyKeys }}
+    - {{ . | quote }}
+  {{- end }}
+{{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "web-ui.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: webtor/retry-proxy
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+ingress:
+  enabled: true
+  annotations: {}
+  paths: ['/']
+  hosts: []
+  tls: []
+
+update:
+  maxUnavailable: 1
+
+upstream: ""
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

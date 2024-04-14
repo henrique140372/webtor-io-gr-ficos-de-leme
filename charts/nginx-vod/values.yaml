@@ -1,0 +1,24 @@
+image:
+  repository: ghcr.io/webtor-io/nginx-vod
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+secret: ""
+
+service:
+  type: ClusterIP
+  ports: 
+    http: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

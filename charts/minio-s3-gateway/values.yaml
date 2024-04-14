@@ -1,0 +1,37 @@
+image:
+  repository: minio/minio
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+update:
+  maxUnavailable: 1
+
+aws:
+  accessKeyId: ""
+  secretAccessKey: ""
+  endpoint: ""
+
+cache:
+  quota: 80
+  after: 3
+  exclude: ""
+  watermark:
+    low: 70
+    high: 90
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

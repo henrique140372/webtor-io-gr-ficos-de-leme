@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: webtor/webtorrent-tracker
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  internalTrafficPolicy: Cluster
+  topologyKeys: []
+
+ingress:
+  enabled: false
+  annotations: {}
+  paths: []
+  hosts: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
